@@ -15,6 +15,7 @@ public:
 	Vei2& operator/=( int rhs );
 	float GetLength() const;
 	int GetLengthSq() const;
+
 public:
 	int x;
 	int y;

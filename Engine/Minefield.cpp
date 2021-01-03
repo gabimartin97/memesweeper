@@ -22,18 +22,29 @@ Minefield::Tiles& Minefield::TileAt(const Vei2 & gridPosition)
 	return field[gridPosition.y * widthInTiles + gridPosition.x];
 }
 
+Vei2 Minefield::GetFieldTopLeft() const
+{
+	return fieldTopLeft;
+}
+
 void Minefield::Draw(Graphics & gfx) 
 {
-	gfx.DrawRect(RectI(Vei2(0, 0), widthInTiles * SpriteCodex::tileSize, heightInTiles * SpriteCodex::tileSize), SpriteCodex::baseColor);
+	gfx.DrawRect(RectI(fieldTopLeft, fieldBottomRight), SpriteCodex::baseColor);
 	for (Vei2 tileIndex(0,0) ; tileIndex.y < widthInTiles; tileIndex.y++)
 	{
 
 		for (tileIndex.x = 0; tileIndex.x < widthInTiles; tileIndex.x++)
 		{
-			Vei2& tileOrigin = Vei2(tileIndex.x * SpriteCodex::tileSize, tileIndex.y * SpriteCodex::tileSize);
+			Vei2& tileOrigin = Vei2(fieldTopLeft.x + tileIndex.x * SpriteCodex::tileSize, fieldTopLeft.y + tileIndex.y * SpriteCodex::tileSize);
 			TileAt(tileIndex).Draw(tileOrigin,gfx);
 		}
 	}
+}
+
+bool Minefield::isInsideField(const Vei2 & position)
+{
+	
+	return (position.x > fieldTopLeft.x && position.x < fieldBottomRight.x && position.y > fieldTopLeft.y && position.y < fieldBottomRight.y);
 }
 
 
@@ -54,11 +65,20 @@ void Minefield::Tiles::Draw(const Vei2& tileOrigin, Graphics & gfx) const
 	case Minefield::Tiles::State::Hidden:
 		SpriteCodex::DrawTileButton(tileOrigin, gfx);
 		break;
+
 	case Minefield::Tiles::State::Flagged:
 		break;
+
 	case Minefield::Tiles::State::Revealed:
+		SpriteCodex::DrawTile0(tileOrigin, gfx);
+		if(hasBomb) SpriteCodex::DrawTileBomb(tileOrigin, gfx);
 		break;
 	default:
 		break;
 	}
+}
+
+void Minefield::Tiles::Reveal()
+{
+	state = State::Revealed;
 }

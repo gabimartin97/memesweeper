@@ -25,6 +25,7 @@
 #include "ChiliException.h"
 #include "Colors.h"
 #include "RectI.h"
+#include "Vei2.h"
 
 class Graphics
 {
@@ -81,4 +82,5 @@ private:
 public:
 	static constexpr int ScreenWidth = 800;
 	static constexpr int ScreenHeight = 600;
+	
 };

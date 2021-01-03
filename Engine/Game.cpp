@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	field(10)
+	field(50)
 {
 }
 
@@ -39,6 +39,15 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
+	if (wnd.mouse.LeftIsPressed())
+	{
+		const Vei2 mouseScreenPosition(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
+		if (field.isInsideField(mouseScreenPosition))
+		{
+			const Vei2 mousefieldPosition = ((mouseScreenPosition - field.GetFieldTopLeft()) / SpriteCodex::tileSize);
+			field.TileAt(mousefieldPosition).Reveal();
+		}
+	}
 }
 
 void Game::ComposeFrame()

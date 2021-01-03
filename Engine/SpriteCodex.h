@@ -8,6 +8,7 @@ class SpriteCodex
 public:
 	// width and height of all tiles
 	static constexpr int tileSize = 16;
+	Vei2 screenCenter= Vei2((Graphics::ScreenWidth / 2), (Graphics::ScreenHeight / 2));
 	// base color for all tiles
 	static constexpr Color baseColor = { 192,192,192 };
 	// 16x16 tile sprites assume (192,192,192) background and top left origin
