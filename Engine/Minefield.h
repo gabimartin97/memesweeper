@@ -21,9 +21,13 @@ private:
 		void SetBomb();
 		bool HasBomb()const;
 		void Draw(const Vei2& tileOrigin, Graphics& gfx)const;
+		void FlagIt();
 		void Reveal();
+		void AddNeighbourBomb();
+		
 	private:
 		bool hasBomb = false;
+		int nBombsArround = 0;
 		State state = State::Hidden;
 
 	};
@@ -34,6 +38,7 @@ public:
 	Vei2 GetFieldTopLeft()const;
 	void Draw(Graphics& gfx);
 	bool isInsideField(const Vei2& position);
+	void ScanForBombs();
 
 private:
 	static constexpr int widthInTiles = 24;
