@@ -25,7 +25,7 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	field(5)
+	field(18)
 {
 }
 
@@ -39,26 +39,31 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	if (wnd.mouse.LeftIsPressed())
+	while (!wnd.mouse.IsEmpty())
 	{
-		const Vei2 mouseScreenPosition(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
-		if (field.isInsideField(mouseScreenPosition))
+		const Mouse::Event e = wnd.mouse.Read();
+		if (e.GetType() == Mouse::Event::Type::LPress)
 		{
-			const Vei2 mousefieldPosition = ((mouseScreenPosition - field.GetFieldTopLeft()) / SpriteCodex::tileSize);
-			field.TileAt(mousefieldPosition).Reveal();
-		}
-	}
-	else 
-		if (wnd.mouse.RightIsPressed())
-		{
-			const Vei2 mouseScreenPosition(wnd.mouse.GetPosX(), wnd.mouse.GetPosY());
+			const Vei2 mouseScreenPosition = Vei2(e.GetPosX(), e.GetPosY()); 
 			if (field.isInsideField(mouseScreenPosition))
 			{
 				const Vei2 mousefieldPosition = ((mouseScreenPosition - field.GetFieldTopLeft()) / SpriteCodex::tileSize);
-				field.TileAt(mousefieldPosition).FlagIt();
+				field.TileAt(mousefieldPosition).Reveal();
 			}
+		} else
+			if (e.GetType() == Mouse::Event::Type::RPress)
+			{
+				const Vei2 mouseScreenPosition = Vei2(e.GetPosX(), e.GetPosY());
+				if (field.isInsideField(mouseScreenPosition))
+				{
+					const Vei2 mousefieldPosition = ((mouseScreenPosition - field.GetFieldTopLeft()) / SpriteCodex::tileSize);
+					field.TileAt(mousefieldPosition).FlagIt();
+				}
 
-		}
+			}
+	}
+
+
 }
 
 void Game::ComposeFrame()

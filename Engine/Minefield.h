@@ -23,6 +23,7 @@ private:
 		void Draw(const Vei2& tileOrigin, Graphics& gfx)const;
 		void FlagIt();
 		void Reveal();
+		
 		void AddNeighbourBomb();
 		
 	private:
@@ -41,8 +42,8 @@ public:
 	void ScanForBombs();
 
 private:
-	static constexpr int widthInTiles = 24;
-	static constexpr int heightInTiles = 24;
+	static constexpr int widthInTiles = 10;
+	static constexpr int heightInTiles = 10;
 	static constexpr int nTiles = widthInTiles*heightInTiles;
 	const Vei2 fieldCenter = Vei2((Graphics::ScreenWidth / 2), (Graphics::ScreenHeight / 2));
 	const Vei2 fieldTopLeft = fieldCenter - Vei2((widthInTiles / 2)*SpriteCodex::tileSize, ((heightInTiles / 2)*SpriteCodex::tileSize));

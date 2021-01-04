@@ -51,7 +51,7 @@ bool Minefield::isInsideField(const Vei2 & position)
 
 void Minefield::ScanForBombs()
 {
-	int nBombs = 0;
+	
 	for (Vei2 tileIndex(0, 0); tileIndex.y < widthInTiles; tileIndex.y++)
 	{
 
@@ -59,41 +59,20 @@ void Minefield::ScanForBombs()
 		{
 			if (TileAt(tileIndex).HasBomb())
 			{
-				if (tileIndex.x > 0)
+				const int minX = std::max(0, tileIndex.x - 1);
+				const int minY = std::max(0, tileIndex.y - 1);
+				const int maxX = std::min(widthInTiles -1, tileIndex.x + 1);
+				const int maxY = std::min(heightInTiles -1, tileIndex.y + 1);
+				
+
+				for (Vei2 neighbourTileIndex(minX, minY); neighbourTileIndex.y <= maxY; neighbourTileIndex.y++)
 				{
-					Vei2 topLeft = tileIndex - Vei2(1, 1);
-					TileAt(topLeft).AddNeighbourBomb();
+					for (neighbourTileIndex.x = minX; neighbourTileIndex.x <= maxX; neighbourTileIndex.x++)
+					{
+						if (neighbourTileIndex == tileIndex) continue;
+						TileAt(neighbourTileIndex).AddNeighbourBomb();
+					}
 
-					Vei2 Left = tileIndex - Vei2(1, 0);
-					TileAt(Left).AddNeighbourBomb();
-
-					Vei2 bottomLeft = tileIndex - Vei2(1, -1);
-					TileAt(bottomLeft).AddNeighbourBomb();
-
-				}
-				if (tileIndex.x < widthInTiles - 1)
-				{
-					Vei2 topRight = tileIndex + Vei2(1, -1);
-					TileAt(topRight).AddNeighbourBomb();
-
-					Vei2 Right = tileIndex + Vei2(1, 0);
-					TileAt(Right).AddNeighbourBomb();
-
-					Vei2 bottomRight = tileIndex - Vei2(-1, -1);
-					TileAt(bottomRight).AddNeighbourBomb();
-
-				}
-
-				if (tileIndex.y > 0)
-				{
-					Vei2 top= tileIndex - Vei2(0, 1);
-					TileAt(top).AddNeighbourBomb();
-				}
-
-				if (tileIndex.y < heightInTiles - 1)
-				{
-					Vei2 bottom = tileIndex + Vei2(0,1);
-					TileAt(bottom).AddNeighbourBomb();
 				}
 
 
@@ -130,6 +109,10 @@ void Minefield::Tiles::Draw(const Vei2& tileOrigin, Graphics & gfx) const
 	case Minefield::Tiles::State::Revealed:
 		SpriteCodex::DrawTile0(tileOrigin, gfx);
 		if(hasBomb) SpriteCodex::DrawTileBomb(tileOrigin, gfx);
+		else  
+		{
+			SpriteCodex::DrawTileX(tileOrigin, gfx, nBombsArround);
+		}
 		break;
 	default:
 		break;
@@ -138,13 +121,23 @@ void Minefield::Tiles::Draw(const Vei2& tileOrigin, Graphics & gfx) const
 
 void Minefield::Tiles::FlagIt()
 {
-	state = State::Flagged;
+	if (state == State::Flagged)
+	{
+		state = State::Hidden;
+	}
+	else
+	{
+		state = State::Flagged;
+	}
 }
 
 void Minefield::Tiles::Reveal()
 {
-	state = State::Revealed;
+	if (! (state == State::Flagged))state = State::Revealed;
+	
 }
+
+
 
 void Minefield::Tiles::AddNeighbourBomb()
 {
