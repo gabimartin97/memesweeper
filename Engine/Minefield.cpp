@@ -82,6 +82,37 @@ void Minefield::ScanForBombs()
 	}
 }
 
+void Minefield::FlagIt(const Vei2 & position)
+{
+	TileAt(position).FlagIt();
+	
+}
+
+bool Minefield::CheckWinCondition(const int nBombs) const
+{
+	int points = 0;
+	for (int i = 0; i < nTiles; i++)
+	{
+
+		if (!field[i].HasBomb())
+		{
+			if (!(field[i].ReturnState() == Tiles::State::Revealed))return false;
+		}
+		else
+
+			if (field[i].HasBomb() && (field[i].ReturnState() == Tiles::State::Flagged))
+			{
+				points++;
+			}
+			else
+				return false;
+	}
+	
+	return points == nBombs;
+}
+
+
+
 
 void Minefield::Tiles::SetBomb()
 {
@@ -91,6 +122,16 @@ void Minefield::Tiles::SetBomb()
 bool Minefield::Tiles::HasBomb() const
 {
 	return hasBomb;
+}
+
+bool Minefield::Tiles::HasFlag() const
+{
+	return (state == State::Flagged);
+}
+
+Minefield::Tiles::State Minefield::Tiles::ReturnState() const
+{
+	return state;
 }
 
 void Minefield::Tiles::Draw(const Vei2& tileOrigin, Graphics & gfx) const
@@ -128,12 +169,17 @@ void Minefield::Tiles::FlagIt()
 	else
 	{
 		state = State::Flagged;
+		
 	}
 }
 
 void Minefield::Tiles::Reveal()
 {
 	if (! (state == State::Flagged))state = State::Revealed;
+	if (hasBomb)
+	{
+		
+	}
 	
 }
 

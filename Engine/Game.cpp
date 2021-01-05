@@ -21,11 +21,12 @@
 #include "MainWindow.h"
 #include "Game.h"
 
-Game::Game( MainWindow& wnd )
+Game::Game(MainWindow& wnd)
 	:
-	wnd( wnd ),
-	gfx( wnd ),
-	field(18)
+	wnd(wnd),
+	gfx(wnd),
+	gameState(GameState::Playing),
+	field(nBombs)
 {
 }
 
@@ -39,7 +40,7 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-	while (!wnd.mouse.IsEmpty())
+	while (!wnd.mouse.IsEmpty() && (gameState == GameState::Playing))
 	{
 		const Mouse::Event e = wnd.mouse.Read();
 		if (e.GetType() == Mouse::Event::Type::LPress)
@@ -49,6 +50,7 @@ void Game::UpdateModel()
 			{
 				const Vei2 mousefieldPosition = ((mouseScreenPosition - field.GetFieldTopLeft()) / SpriteCodex::tileSize);
 				field.TileAt(mousefieldPosition).Reveal();
+				if (field.TileAt(mousefieldPosition).HasBomb()) gameState = GameState::Lost;
 			}
 		} else
 			if (e.GetType() == Mouse::Event::Type::RPress)
@@ -58,9 +60,14 @@ void Game::UpdateModel()
 				{
 					const Vei2 mousefieldPosition = ((mouseScreenPosition - field.GetFieldTopLeft()) / SpriteCodex::tileSize);
 					field.TileAt(mousefieldPosition).FlagIt();
+					
 				}
 
 			}
+		if (field.CheckWinCondition(nBombs))
+		{
+			gameState = GameState::Won;
+		}
 	}
 
 
@@ -69,4 +76,7 @@ void Game::UpdateModel()
 void Game::ComposeFrame()
 {
 	field.Draw(gfx);
+	if (gameState == GameState::Lost)SpriteCodex::DrawGameOver(Vei2(200, 150), gfx);
+	else if(gameState == GameState::Won)SpriteCodex::DrawGameWon(Vei2(200, 150), gfx);
+
 }

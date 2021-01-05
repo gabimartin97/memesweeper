@@ -28,10 +28,17 @@
 class Game
 {
 public:
+	enum class GameState {
+		Playing,
+		Lost,
+		Won
+	};
+public:
 	Game( class MainWindow& wnd );
 	Game( const Game& ) = delete;
 	Game& operator=( const Game& ) = delete;
 	void Go();
+
 private:
 	void ComposeFrame();
 	void UpdateModel();
@@ -44,5 +51,7 @@ private:
 	/********************************/
 	/*  User Variables              */
 	Minefield field;
+	GameState gameState; 
+	static constexpr int nBombs = 3;
 	/********************************/
 };
