@@ -215,10 +215,9 @@ void Minefield::Tiles::SetFlag()
 	{
 		state = State::Hidden;
 	}
-	else
+	else if (!(state == State::Revealed))
 	{
 		state = State::Flagged;
-		
 	}
 }
 
