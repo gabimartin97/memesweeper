@@ -43,27 +43,33 @@ void Game::UpdateModel()
 	while (!wnd.mouse.IsEmpty() && (gameState == GameState::Playing))
 	{
 		const Mouse::Event e = wnd.mouse.Read();
-		if (e.GetType() == Mouse::Event::Type::LPress)
+		if (e.GetType() == Mouse::Event::Type::LPress) //Click Izquierdo --> Revelar casilla
 		{
 			const Vei2 mouseScreenPosition = Vei2(e.GetPosX(), e.GetPosY()); 
+			 
 			if (field.isInsideField(mouseScreenPosition))
 			{
-				const Vei2 mousefieldPosition = ((mouseScreenPosition - field.GetFieldTopLeft()) / SpriteCodex::tileSize);
-				field.RevealTile(mousefieldPosition);
-				if (field.TileAt(mousefieldPosition).HasBomb()) gameState = GameState::Lost;
+				const Vei2 mouseFieldPosition = ((mouseScreenPosition - field.GetFieldTopLeft()) / SpriteCodex::tileSize);
+				field.RevealTile(mouseFieldPosition);
+				if (field.TileAt(mouseFieldPosition).HasBomb())
+				{
+					gameState = GameState::Lost;
+					field.RevealAllBombs(mouseFieldPosition);
+				}
 			}
 		} else
-			if (e.GetType() == Mouse::Event::Type::RPress)
+			if (e.GetType() == Mouse::Event::Type::RPress) //Click Derecho --> Colocar Bandera
 			{
 				const Vei2 mouseScreenPosition = Vei2(e.GetPosX(), e.GetPosY());
 				if (field.isInsideField(mouseScreenPosition))
 				{
 					const Vei2 mousefieldPosition = ((mouseScreenPosition - field.GetFieldTopLeft()) / SpriteCodex::tileSize);
-					field.TileAt(mousefieldPosition).FlagIt();
-					
+					field.FlagTile(mousefieldPosition);
 				}
 
 			}
+
+			
 		if (field.CheckWinCondition(nBombs))
 		{
 			gameState = GameState::Won;
@@ -75,8 +81,23 @@ void Game::UpdateModel()
 
 void Game::ComposeFrame()
 {
-	field.Draw(gfx);
-	if (gameState == GameState::Lost)SpriteCodex::DrawGameOver(Vei2(200, 150), gfx);
-	else if(gameState == GameState::Won)SpriteCodex::DrawGameWon(Vei2(200, 150), gfx);
+	
+	switch (gameState)
+	{
+	case Game::GameState::Playing:
+		field.Draw(gfx);
+		break;
+	case Game::GameState::Lost:
+		field.Draw(gfx);
+		SpriteCodex::DrawGameOver(Vei2(200, 0), gfx);
+		break;
+	case Game::GameState::Won:
+		field.Draw(gfx);
+		SpriteCodex::DrawGameWon(Vei2(200, 0), gfx);
+		break;
+	default:
+		break;
+	}
+	
 
 }

@@ -6,8 +6,6 @@
 class Minefield
 {
 private:
-
-
 	class Tiles
 	{
 	public:
@@ -15,19 +13,19 @@ private:
 		{
 			Hidden,
 			Flagged,
-			Revealed
+			Revealed,
+			Exploded
 		};
 		Tiles() = default;
-		void SetBomb();
-		bool HasBomb()const;
-		bool HasFlag()const;
-		State ReturnState()const;
 		void Draw(const Vei2& tileOrigin, Graphics& gfx)const;
-		void FlagIt();
+		void SetBomb();
+		void SetFlag();
 		void Reveal();
-		
 		void AddNeighbourBomb();
 		bool HasNeighbourBomb();
+		bool HasBomb()const;
+		void SetState(const State& state_in);
+		State ReturnState()const;
 		
 	private:
 		bool hasBomb = false;
@@ -43,13 +41,14 @@ public:
 	void Draw(Graphics& gfx);
 	bool isInsideField(const Vei2& position);
 	void ScanForBombs();
-	void FlagIt(const Vei2& position);
-	bool CheckWinCondition(const int nBombs) const;
+	void FlagTile(const Vei2& position);
 	void RevealTile(const Vei2& position);
+	void RevealAllBombs(const Vei2& explodedPosition);
+	bool CheckWinCondition(const int nBombs) const;
 
 private:
-	static constexpr int widthInTiles = 6;
-	static constexpr int heightInTiles = 6;
+	static constexpr int widthInTiles = 8;
+	static constexpr int heightInTiles = 8;
 	static constexpr int nTiles = widthInTiles*heightInTiles;
 	const Vei2 fieldCenter = Vei2((Graphics::ScreenWidth / 2), (Graphics::ScreenHeight / 2));
 	const Vei2 fieldTopLeft = fieldCenter - Vei2((widthInTiles / 2)*SpriteCodex::tileSize, ((heightInTiles / 2)*SpriteCodex::tileSize));

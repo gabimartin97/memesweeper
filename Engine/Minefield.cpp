@@ -1,5 +1,6 @@
 #include "Minefield.h"
 #include <algorithm>
+#include <assert.h>
 
 Minefield::Minefield(const int nBombs)
 	:
@@ -82,9 +83,9 @@ void Minefield::ScanForBombs()
 	}
 }
 
-void Minefield::FlagIt(const Vei2 & position)
+void Minefield::FlagTile(const Vei2 & position)
 {
-	TileAt(position).FlagIt();
+	TileAt(position).SetFlag();
 	
 }
 
@@ -139,6 +140,21 @@ void Minefield::RevealTile(const Vei2 & position)
 	}
 }
 
+void Minefield::RevealAllBombs(const Vei2 & explodedPosition)
+{
+	
+	for (int i = 0; i < nTiles; i++)
+	{
+
+		if (field[i].HasBomb())
+		{
+			field[i].Reveal();
+		}
+					
+	}
+	TileAt(explodedPosition).SetState(Tiles::State::Exploded);
+}
+
 
 
 
@@ -152,9 +168,10 @@ bool Minefield::Tiles::HasBomb() const
 	return hasBomb;
 }
 
-bool Minefield::Tiles::HasFlag() const
+void Minefield::Tiles::SetState(const State & state_in)
 {
-	return (state == State::Flagged);
+	if (state_in == State::Exploded)assert(hasBomb == true);
+	state = state_in;
 }
 
 Minefield::Tiles::State Minefield::Tiles::ReturnState() const
@@ -183,12 +200,16 @@ void Minefield::Tiles::Draw(const Vei2& tileOrigin, Graphics & gfx) const
 			SpriteCodex::DrawTileX(tileOrigin, gfx, nBombsArround);
 		}
 		break;
+	case Minefield::Tiles::State::Exploded:
+		SpriteCodex::DrawTileBombRed(tileOrigin, gfx);
+
+		break;
 	default:
 		break;
 	}
 }
 
-void Minefield::Tiles::FlagIt()
+void Minefield::Tiles::SetFlag()
 {
 	if (state == State::Flagged)
 	{

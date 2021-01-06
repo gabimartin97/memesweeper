@@ -52,6 +52,6 @@ private:
 	/*  User Variables              */
 	Minefield field;
 	GameState gameState; 
-	static constexpr int nBombs = 3;
+	static constexpr int nBombs = 10;
 	/********************************/
 };
