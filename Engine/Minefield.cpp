@@ -111,6 +111,34 @@ bool Minefield::CheckWinCondition(const int nBombs) const
 	return points == nBombs;
 }
 
+void Minefield::RevealTile(const Vei2 & position)
+{
+	if (!(TileAt(position).ReturnState() == Tiles::State::Revealed))
+	{
+		TileAt(position).Reveal();
+		if (!(TileAt(position).HasNeighbourBomb()))
+		{
+			Vei2 currentPosition = position;
+			const int minX = std::max(0, position.x - 1);
+			const int minY = std::max(0, position.y - 1);
+			const int maxX = std::min(widthInTiles - 1, position.x + 1);
+			const int maxY = std::min(heightInTiles - 1, position.y + 1);
+
+
+			for (Vei2 neighbourTileIndex(minX, minY); neighbourTileIndex.y <= maxY; neighbourTileIndex.y++)
+			{
+				for (neighbourTileIndex.x = minX; neighbourTileIndex.x <= maxX; neighbourTileIndex.x++)
+				{
+					if (neighbourTileIndex == currentPosition) continue;
+					RevealTile(neighbourTileIndex);
+				}
+
+			}
+
+		}
+	}
+}
+
 
 
 
@@ -175,12 +203,8 @@ void Minefield::Tiles::FlagIt()
 
 void Minefield::Tiles::Reveal()
 {
-	if (! (state == State::Flagged))state = State::Revealed;
-	if (hasBomb)
-	{
+	if (!(state == State::Flagged))state = State::Revealed;
 		
-	}
-	
 }
 
 
@@ -189,6 +213,11 @@ void Minefield::Tiles::AddNeighbourBomb()
 {
 	nBombsArround++;
 	
+}
+
+bool Minefield::Tiles::HasNeighbourBomb()
+{
+	return !(nBombsArround == 0);
 }
 
 

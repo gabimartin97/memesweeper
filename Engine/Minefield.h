@@ -27,6 +27,7 @@ private:
 		void Reveal();
 		
 		void AddNeighbourBomb();
+		bool HasNeighbourBomb();
 		
 	private:
 		bool hasBomb = false;
@@ -44,6 +45,7 @@ public:
 	void ScanForBombs();
 	void FlagIt(const Vei2& position);
 	bool CheckWinCondition(const int nBombs) const;
+	void RevealTile(const Vei2& position);
 
 private:
 	static constexpr int widthInTiles = 6;

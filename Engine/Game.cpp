@@ -49,7 +49,7 @@ void Game::UpdateModel()
 			if (field.isInsideField(mouseScreenPosition))
 			{
 				const Vei2 mousefieldPosition = ((mouseScreenPosition - field.GetFieldTopLeft()) / SpriteCodex::tileSize);
-				field.TileAt(mousefieldPosition).Reveal();
+				field.RevealTile(mousefieldPosition);
 				if (field.TileAt(mousefieldPosition).HasBomb()) gameState = GameState::Lost;
 			}
 		} else
